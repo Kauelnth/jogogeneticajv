@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Genética Game</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #121212;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      color: #00ffcc;
+    }
+
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 10px;
+      display: inline-block;
+      width: 200px;
+      vertical-align: top;
+    }
+
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background: #00ffcc;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .personagem {
+      font-size: 40px;
+    }
+
+    .acerto { color: #00ff00; }
+    .erro { color: #ff4444; }
+
+    #caixa {
+      font-size: 60px;
+      margin: 20px;
+    }
+
+    .girando {
+      animation: girar 0.5s infinite linear;
+    }
+
+    @keyframes girar {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Monte Seu Filho</h1>
+
+<p id="objetivo"></p>
+
+<h2>Personagens</h2>
+
+<div class="card">
+  <div class="personagem">👨🏻</div>
+  <b>João</b><br>
+  Olhos: Castanho (AA)<br>
+  Cabelo: Escuro (Aa)
+</div>
+
+<div class="card">
+  <div class="personagem">👨🏽</div>
+  <b>Carlos</b><br>
+  Olhos: Castanho (Aa)<br>
+  Cabelo: Claro (aa)
+</div>
+
+<div class="card">
+  <div class="personagem">👩🏻</div>
+  <b>Ana</b><br>
+  Olhos: azul (aa)<br>
+  Cabelo: escuro (AA)
+</div>
+
+<div class="card">
+  <div class="personagem">👩🏽</div>
+  <b>Beatriz</b><br>
+  Olhos: castanho (Aa)<br>
+  Cabelo: escuro (Aa)
+</div>
+
+<br>
+
+Homem:
+<select id="homem">
+  <option value="joao">João</option>
+  <option value="carlos">Carlos</option>
+</select>
+
+Mulher:
+<select id="mulher">
+  <option value="ana">Ana</option>
+  <option value="beatriz">Beatriz</option>
+</select>
+
+<br>
+<button onclick="jogar()">Criar Filho</button>
+
+<div id="caixa">🧬</div>
+
+<h3 id="filho"></h3>
+<h3 id="resultado"></h3>
+<h3 id="pontos"></h3>
+
+<audio id="somClique" src="fahhhhhhhhhhhhhh.mp3"></audio>
+
+<script>
+let pontos = 0;
+
+const personagens = {
+  joao: { olhos: "AA", cabelo: "Aa" },
+  carlos: { olhos: "Aa", cabelo: "aa" },
+  ana: { olhos: "aa", cabelo: "AA" },
+  beatriz: { olhos: "Aa", cabelo: "Aa" }
+};
+
+let objetivoAtual = {};
+
+function novoObjetivo() {
+  let objetivos = [
+    { olhos: "azul", cabelo: "claro" },
+    { olhos: "castanho", cabelo: "escuro" },
+    { olhos: "azul", cabelo: "escuro" }
+  ];
+
+  objetivoAtual = objetivos[Math.floor(Math.random() * objetivos.length)];
+
+  document.getElementById("objetivo").innerText =
+    "Objetivo: olhos " + objetivoAtual.olhos +
+    " e cabelo " + objetivoAtual.cabelo;
+}
+
+function fenotipo(gene) {
+  return gene.includes("A") ? "dominante" : "recessivo";
+}
+
+function traduzOlhos(tipo) {
+  return tipo === "dominante" ? "castanho" : "azul";
+}
+
+function traduzCabelo(tipo) {
+  return tipo === "dominante" ? "escuro" : "claro";
+}
+
+function cruzar(g1, g2) {
+  let resultados = [];
+  for (let a of g1) {
+    for (let b of g2) {
+      let gene = a + b;
+      if (gene === "aA") gene = "Aa";
+      resultados.push(gene);
+    }
+  }
+  return resultados;
+}
+
+function jogar() {
+  let caixa = document.getElementById("caixa");
+
+  let som = document.getElementById("somClique");
+  som.currentTime = 0;
+  som.play();
+
+  caixa.classList.add("girando");
+
+  document.getElementById("filho").innerText = "";
+  document.getElementById("resultado").innerText = "";
+
+  setTimeout(() => {
+
+    caixa.classList.remove("girando");
+
+    let h = personagens[document.getElementById("homem").value];
+    let m = personagens[document.getElementById("mulher").value];
+
+    let olhos = cruzar(h.olhos, m.olhos);
+    let cabelo = cruzar(h.cabelo, m.cabelo);
+
+    let i = Math.floor(Math.random() * 4);
+
+    let olhoFinal = traduzOlhos(fenotipo(olhos[i]));
+    let cabeloFinal = traduzCabelo(fenotipo(cabelo[i]));
+
+    document.getElementById("filho").innerText =
+      "Filho: olhos " + olhoFinal + ", cabelo " + cabeloFinal;
+
+    if (olhoFinal === objetivoAtual.olhos && cabeloFinal === objetivoAtual.cabelo) {
+      pontos++;
+      document.getElementById("resultado").innerText = "Acertou";
+      document.getElementById("resultado").className = "acerto";
+    } else {
+      document.getElementById("resultado").innerText = "Errou";
+      document.getElementById("resultado").className = "erro";
+    }
+
+    document.getElementById("pontos").innerText = "Pontos: " + pontos;
+
+    novoObjetivo();
+
+  }, 2000);
+}
+
+novoObjetivo();
+</script>
+
+</body>
+</html>
