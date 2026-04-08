@@ -3,60 +3,34 @@
 <head>
   <title>Genética Game</title>
   <style>
-    body {
-      font-family: Arial;
-      background: #121212;
-      color: white;
-      text-align: center;
+    body { font-family: Arial; background: #121212; color: white; text-align: center; }
+    h1 { color: #00ffcc; }
+
+    #objetivo {
+      font-size: 22px; font-weight: bold; background: #00ffcc22;
+      border: 2px solid #00ffcc; padding: 10px; border-radius: 10px; display: inline-block;
     }
 
-    h1 {
-      color: #00ffcc;
+    .explicacao {
+      margin: 15px auto; max-width: 600px; background: #1e1e1e; padding: 10px; border-radius: 10px;
+      font-size: 14px;
     }
 
     .card {
-      background: #1e1e1e;
-      padding: 15px;
-      margin: 10px;
-      border-radius: 10px;
-      display: inline-block;
-      width: 200px;
-      vertical-align: top;
+      background: #1e1e1e; padding: 15px; margin: 10px;
+      border-radius: 10px; display: inline-block; width: 200px; vertical-align: top;
     }
 
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 5px;
-      border: none;
-    }
-
-    button {
-      background: #00ffcc;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .personagem {
-      font-size: 40px;
-    }
+    select, button { padding: 10px; margin: 10px; border-radius: 5px; border: none; }
+    button { background: #00ffcc; cursor: pointer; font-weight: bold; }
 
     .acerto { color: #00ff00; }
     .erro { color: #ff4444; }
 
-    #caixa {
-      font-size: 60px;
-      margin: 20px;
-    }
+    #caixa { font-size: 60px; margin: 20px; }
 
-    .girando {
-      animation: girar 0.5s infinite linear;
-    }
-
-    @keyframes girar {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    .girando { animation: girar 0.5s infinite linear; }
+    @keyframes girar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 
@@ -66,35 +40,24 @@
 
 <p id="objetivo"></p>
 
+<div class="explicacao">
+  Olhos: A = castanho, a = azul<br>
+  Cabelo: A = escuro, a = claro<br>
+  AA ou Aa = dominante<br>
+  aa = recessivo
+</div>
+
 <h2>Personagens</h2>
 
-<div class="card">
-  <div class="personagem">👨🏻</div>
-  <b>João</b><br>
-  Olhos: Castanho (AA)<br>
-  Cabelo: Escuro (Aa)
-</div>
+<div class="card">👨🏻<br>João<br>Olhos: AA (castanho)<br>Cabelo: Aa (escuro)</div>
+<div class="card">👨🏽<br>Carlos<br>Olhos: Aa (castanho)<br>Cabelo: aa (claro)</div>
+<div class="card">👨🏿<br>Lucas<br>Olhos: aa (azul)<br>Cabelo: Aa (escuro)</div>
+<div class="card">👨🏼<br>Pedro<br>Olhos: Aa (castanho)<br>Cabelo: AA (escuro)</div>
 
-<div class="card">
-  <div class="personagem">👨🏽</div>
-  <b>Carlos</b><br>
-  Olhos: Castanho (Aa)<br>
-  Cabelo: Claro (aa)
-</div>
-
-<div class="card">
-  <div class="personagem">👩🏻</div>
-  <b>Ana</b><br>
-  Olhos: azul (aa)<br>
-  Cabelo: escuro (AA)
-</div>
-
-<div class="card">
-  <div class="personagem">👩🏽</div>
-  <b>Beatriz</b><br>
-  Olhos: castanho (Aa)<br>
-  Cabelo: escuro (Aa)
-</div>
+<div class="card">👩🏻<br>Ana<br>Olhos: aa (azul)<br>Cabelo: AA (escuro)</div>
+<div class="card">👩🏽<br>Beatriz<br>Olhos: Aa (castanho)<br>Cabelo: Aa (escuro)</div>
+<div class="card">👩🏿<br>Marina<br>Olhos: AA (castanho)<br>Cabelo: aa (claro)</div>
+<div class="card">👩🏼<br>Julia<br>Olhos: Aa (castanho)<br>Cabelo: AA (escuro)</div>
 
 <br>
 
@@ -102,12 +65,16 @@ Homem:
 <select id="homem">
   <option value="joao">João</option>
   <option value="carlos">Carlos</option>
+  <option value="lucas">Lucas</option>
+  <option value="pedro">Pedro</option>
 </select>
 
 Mulher:
 <select id="mulher">
   <option value="ana">Ana</option>
   <option value="beatriz">Beatriz</option>
+  <option value="marina">Marina</option>
+  <option value="julia">Julia</option>
 </select>
 
 <br>
@@ -115,11 +82,14 @@ Mulher:
 
 <div id="caixa">🧬</div>
 
+<h3 id="cruzamento"></h3>
 <h3 id="filho"></h3>
 <h3 id="resultado"></h3>
 <h3 id="pontos"></h3>
 
-<audio id="somClique" src="fahhhhhhhhhhhhhh.mp3"></audio>
+<audio id="somClique" src="giro.mp3"></audio>
+<audio id="somAcerto" src="acerto.mp3"></audio>
+<audio id="somErro" src="fahhhhhhhhhhhhhh.mp3"></audio>
 
 <script>
 let pontos = 0;
@@ -127,8 +97,12 @@ let pontos = 0;
 const personagens = {
   joao: { olhos: "AA", cabelo: "Aa" },
   carlos: { olhos: "Aa", cabelo: "aa" },
+  lucas: { olhos: "aa", cabelo: "Aa" },
+  pedro: { olhos: "Aa", cabelo: "AA" },
   ana: { olhos: "aa", cabelo: "AA" },
-  beatriz: { olhos: "Aa", cabelo: "Aa" }
+  beatriz: { olhos: "Aa", cabelo: "Aa" },
+  marina: { olhos: "AA", cabelo: "aa" },
+  julia: { olhos: "Aa", cabelo: "AA" }
 };
 
 let objetivoAtual = {};
@@ -136,8 +110,9 @@ let objetivoAtual = {};
 function novoObjetivo() {
   let objetivos = [
     { olhos: "azul", cabelo: "claro" },
-    { olhos: "castanho", cabelo: "escuro" },
-    { olhos: "azul", cabelo: "escuro" }
+    { olhos: "azul", cabelo: "escuro" },
+    { olhos: "castanho", cabelo: "claro" },
+    { olhos: "castanho", cabelo: "escuro" }
   ];
 
   objetivoAtual = objetivos[Math.floor(Math.random() * objetivos.length)];
@@ -173,18 +148,11 @@ function cruzar(g1, g2) {
 
 function jogar() {
   let caixa = document.getElementById("caixa");
-
-  let som = document.getElementById("somClique");
-  som.currentTime = 0;
-  som.play();
+  document.getElementById("somClique").play();
 
   caixa.classList.add("girando");
 
-  document.getElementById("filho").innerText = "";
-  document.getElementById("resultado").innerText = "";
-
   setTimeout(() => {
-
     caixa.classList.remove("girando");
 
     let h = personagens[document.getElementById("homem").value];
@@ -192,6 +160,10 @@ function jogar() {
 
     let olhos = cruzar(h.olhos, m.olhos);
     let cabelo = cruzar(h.cabelo, m.cabelo);
+
+    document.getElementById("cruzamento").innerText =
+      "Olhos: " + h.olhos + " x " + m.olhos + " → " + olhos.join(", ") +
+      " | Cabelo: " + h.cabelo + " x " + m.cabelo + " → " + cabelo.join(", ");
 
     let i = Math.floor(Math.random() * 4);
 
@@ -205,9 +177,11 @@ function jogar() {
       pontos++;
       document.getElementById("resultado").innerText = "Acertou";
       document.getElementById("resultado").className = "acerto";
+      document.getElementById("somAcerto").play();
     } else {
       document.getElementById("resultado").innerText = "Errou";
       document.getElementById("resultado").className = "erro";
+      document.getElementById("somErro").play();
     }
 
     document.getElementById("pontos").innerText = "Pontos: " + pontos;
